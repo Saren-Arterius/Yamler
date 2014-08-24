@@ -5,13 +5,13 @@ import net.cubespace.Yamler.Config.Config;
  */
 public class PrivateConfig extends Config {
     private boolean TestBoolean = false;
-    private int     TestInt     = 0;
-    private short   TestShort   = 0;
-    private byte    TestByte    = 0;
-    private double  TestDouble  = 0.0000001;
-    private float   TestFloat   = 0.0001F;
-    private long    TestLong    = 1684654679684L;
-    private char    TestChar    = 'c';
+    private int TestInt = 0;
+    private short TestShort = 0;
+    private byte TestByte = 0;
+    private double TestDouble = 0.0000001;
+    private float TestFloat = 0.0001F;
+    private long TestLong = 1684654679684L;
+    private char TestChar = 'c';
 
     public boolean isTestBoolean() {
         return TestBoolean;

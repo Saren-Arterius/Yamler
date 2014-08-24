@@ -1,9 +1,9 @@
 package converter.customconverter;
 
-import java.lang.reflect.ParameterizedType;
-
-import net.cubespace.Yamler.Config.InternalConverter;
 import net.cubespace.Yamler.Config.Converter.Converter;
+import net.cubespace.Yamler.Config.InternalConverter;
+
+import java.lang.reflect.ParameterizedType;
 
 /**
  * @author geNAZt (fabian.fassbender42@googlemail.com)

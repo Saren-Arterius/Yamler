@@ -1,30 +1,28 @@
-import java.io.File;
-import java.io.IOException;
-
+import base.Util;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
-
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 
-import base.Util;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
 public class Path {
     private PathConfig pathConfig;
-    private File       file;
+    private File file;
 
     @BeforeSuite
     public void before() {
         pathConfig = new PathConfig();
 
         file = new File("temp", "pathConfig.yml");
-        if (!file.getParentFile().exists()) {
+        if(!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
 
-        if (file.exists()) {
+        if(file.exists()) {
             file.delete();
         }
     }
@@ -33,10 +31,11 @@ public class Path {
     public void initNull() throws InvalidConfigurationException, IOException {
         pathConfig.init(file);
 
-        final String fileContents = Util.readFile(file);
+        String fileContents = Util.readFile(file);
         System.out.println(fileContents);
 
-        Assert.assertEquals(fileContents.replace("\r", ""), "# test\n" + "config-with-dash: true\n");
+        Assert.assertEquals(fileContents.replace("\r", ""), "# test\n" +
+                "config-with-dash: true\n");
     }
 
     @org.testng.annotations.Test(priority = 2)
@@ -44,14 +43,15 @@ public class Path {
         pathConfig.Test = false;
         pathConfig.save();
 
-        final String fileContents = Util.readFile(file);
+        String fileContents = Util.readFile(file);
 
-        Assert.assertEquals(fileContents.replace("\r", ""), "# test\n" + "config-with-dash: false\n");
+        Assert.assertEquals(fileContents.replace("\r", ""), "# test\n" +
+                "config-with-dash: false\n");
     }
 
     @org.testng.annotations.Test(priority = 3)
     public void loadConfig() throws InvalidConfigurationException {
-        final PathConfig pathConfig1 = new PathConfig();
+        PathConfig pathConfig1 = new PathConfig();
         pathConfig1.load(file);
 
         Assert.assertTrue(!pathConfig1.Test);

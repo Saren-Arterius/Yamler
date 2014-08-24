@@ -1,19 +1,17 @@
 package converter;
 
-import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
-
 import base.BaseTest;
 import base.Util;
 import converter.config.SimpleObjectConfig;
 import converter.customconverter.ObjectConverter;
+import org.testng.Assert;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
 
 /**
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
 public class SimpleConverterTest extends BaseTest {
-    @Override
     @BeforeSuite
     public void setup() throws Exception {
         config = new SimpleObjectConfig();
@@ -27,8 +25,12 @@ public class SimpleConverterTest extends BaseTest {
     public void onInit() throws Exception {
         config.init(file);
 
-        final String fileContents = Util.readFile(file);
+        String fileContents = Util.readFile(file);
 
-        Assert.assertEquals(fileContents, "TestMap:\n" + "  test: test\n" + "TestSet:\n" + "- test\n");
+        Assert.assertEquals(fileContents,
+                "TestMap:\n" +
+                "  test: test\n" +
+                "TestSet:\n" +
+                "- test\n");
     }
 }

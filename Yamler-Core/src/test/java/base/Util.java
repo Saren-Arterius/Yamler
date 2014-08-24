@@ -10,8 +10,8 @@ import java.io.IOException;
  */
 public class Util {
     public static String readFile(File file) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            final StringBuilder sb = new StringBuilder();
+        try(BufferedReader br = new BufferedReader(new FileReader(file))) {
+            StringBuilder sb = new StringBuilder();
             String line = br.readLine();
 
             while (line != null) {

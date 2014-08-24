@@ -1,16 +1,19 @@
 package net.cubespace.Yamler.Config.Converter;
 
-import java.lang.reflect.ParameterizedType;
-import java.util.Map;
-
 import net.cubespace.Yamler.Config.ConfigSection;
 import net.cubespace.Yamler.Config.InternalConverter;
+
+import java.lang.reflect.ParameterizedType;
+import java.util.Map;
 
 /**
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
 public class Config implements Converter {
+    private InternalConverter internalConverter;
+
     public Config(InternalConverter internalConverter) {
+        this.internalConverter = internalConverter;
     }
 
     @Override
@@ -20,16 +23,16 @@ public class Config implements Converter {
 
     @Override
     public Object fromConfig(Class type, Object section, ParameterizedType genericType) throws Exception {
-        final net.cubespace.Yamler.Config.Config obj = (net.cubespace.Yamler.Config.Config) newInstance(type);
+        net.cubespace.Yamler.Config.Config obj = (net.cubespace.Yamler.Config.Config) newInstance(type);
         obj.loadFromMap((section instanceof Map) ? (Map) section : ((ConfigSection) section).getRawMap());
         return obj;
     }
-
+    
     // recursively handles enclosed classes
     public Object newInstance(Class type) throws Exception {
-        final Class enclosingClass = type.getEnclosingClass();
+        Class enclosingClass = type.getEnclosingClass();
         if (enclosingClass != null) {
-            final Object instanceOfEnclosingClass = newInstance(enclosingClass);
+            Object instanceOfEnclosingClass = newInstance(enclosingClass);
             return type.getConstructor(enclosingClass).newInstance(instanceOfEnclosingClass);
         } else {
             return type.newInstance();

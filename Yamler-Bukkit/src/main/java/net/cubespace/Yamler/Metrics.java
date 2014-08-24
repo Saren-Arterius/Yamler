@@ -1,41 +1,37 @@
 package net.cubespace.Yamler;/*
-                              * Copyright 2011-2013 Tyler Blair. All rights
-                              * reserved.
-                              * Redistribution and use in source and binary
-                              * forms, with or without modification, are
-                              * permitted provided that the following conditions
-                              * are met:
-                              * 1. Redistributions of source code must retain
-                              * the above copyright notice, this list of
-                              * conditions and the following disclaimer.
-                              * 2. Redistributions in binary form must reproduce
-                              * the above copyright notice, this list
-                              * of conditions and the following disclaimer in
-                              * the documentation and/or other materials
-                              * provided with the distribution.
-                              * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS
-                              * IS'' AND ANY EXPRESS OR IMPLIED
-                              * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-                              * IMPLIED WARRANTIES OF MERCHANTABILITY AND
-                              * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-                              * IN NO EVENT SHALL THE AUTHOR OR
-                              * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-                              * INCIDENTAL, SPECIAL, EXEMPLARY, OR
-                              * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-                              * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-                              * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
-                              * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-                              * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-                              * STRICT LIABILITY, OR TORT (INCLUDING
-                              * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-                              * OF THE USE OF THIS SOFTWARE, EVEN IF
-                              * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-                              * The views and conclusions contained in the
-                              * software and documentation are those of the
-                              * authors and contributors and should not be
-                              * interpreted as representing official policies,
-                              * either expressed or implied, of anybody else.
-                              */
+ * Copyright 2011-2013 Tyler Blair. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are
+ * permitted provided that the following conditions are met:
+ *
+ *    1. Redistributions of source code must retain the above copyright notice, this list of
+ *       conditions and the following disclaimer.
+ *
+ *    2. Redistributions in binary form must reproduce the above copyright notice, this list
+ *       of conditions and the following disclaimer in the documentation and/or other materials
+ *       provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those of the
+ * authors and contributors and should not be interpreted as representing official policies,
+ * either expressed or implied, of anybody else.
+ */
+
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -57,44 +53,37 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.scheduler.BukkitTask;
-
 public class Metrics {
 
     /**
      * The current revision number
      */
-    private final static int        REVISION      = 7;
+    private final static int REVISION = 7;
 
     /**
      * The base url of the metrics domain
      */
-    private static final String     BASE_URL      = "http://report.mcstats.org";
+    private static final String BASE_URL = "http://report.mcstats.org";
 
     /**
      * The url used to report a server's status
      */
-    private static final String     REPORT_URL    = "/plugin/%s";
+    private static final String REPORT_URL = "/plugin/%s";
 
     /**
      * Interval of time to ping (in minutes)
      */
-    private static final int        PING_INTERVAL = 15;
+    private static final int PING_INTERVAL = 15;
 
     /**
      * The plugin this metrics submits for
      */
-    private final Plugin            plugin;
+    private final Plugin plugin;
 
     /**
      * All of the custom graphs to submit to metrics
      */
-    private final Set<Graph>        graphs        = Collections.synchronizedSet(new HashSet<Graph>());
+    private final Set<Graph> graphs = Collections.synchronizedSet(new HashSet<Graph>());
 
     /**
      * The plugin configuration file
@@ -104,27 +93,27 @@ public class Metrics {
     /**
      * The plugin configuration file
      */
-    private final File              configurationFile;
+    private final File configurationFile;
 
     /**
      * Unique server id
      */
-    private final String            guid;
+    private final String guid;
 
     /**
      * Debug mode
      */
-    private final boolean           debug;
+    private final boolean debug;
 
     /**
      * Lock for synchronization
      */
-    private final Object            optOutLock    = new Object();
+    private final Object optOutLock = new Object();
 
     /**
      * The scheduled task
      */
-    private volatile BukkitTask     task          = null;
+    private volatile BukkitTask task = null;
 
     public Metrics(final Plugin plugin) throws IOException {
         if (plugin == null) {
@@ -154,14 +143,11 @@ public class Metrics {
     }
 
     /**
-     * Construct and create a Graph that can be used to separate specific
-     * plotters to their own graphs on the metrics
+     * Construct and create a Graph that can be used to separate specific plotters to their own graphs on the metrics
      * website. Plotters can be added to the graph object returned.
      *
-     * @param name
-     *            The name of the graph
-     * @return Graph object created. Will never return NULL under normal
-     *         circumstances unless bad parameters are given
+     * @param name The name of the graph
+     * @return Graph object created. Will never return NULL under normal circumstances unless bad parameters are given
      */
     public Graph createGraph(final String name) {
         if (name == null) {
@@ -179,11 +165,9 @@ public class Metrics {
     }
 
     /**
-     * Add a Graph object to BukkitMetrics that represents data for the plugin
-     * that should be sent to the backend
+     * Add a Graph object to BukkitMetrics that represents data for the plugin that should be sent to the backend
      *
-     * @param graph
-     *            The name of the graph
+     * @param graph The name of the graph
      */
     public void addGraph(final Graph graph) {
         if (graph == null) {
@@ -194,10 +178,8 @@ public class Metrics {
     }
 
     /**
-     * Start measuring statistics. This will immediately create an async
-     * repeating task as the plugin and send the
-     * initial data to the metrics backend, and then after that it will post in
-     * increments of PING_INTERVAL * 1200
+     * Start measuring statistics. This will immediately create an async repeating task as the plugin and send the
+     * initial data to the metrics backend, and then after that it will post in increments of PING_INTERVAL * 1200
      * ticks.
      *
      * @return True if statistics measuring is running, otherwise false.
@@ -219,42 +201,36 @@ public class Metrics {
 
                 private boolean firstPost = true;
 
-                @Override
                 public void run() {
                     try {
-                        // This has to be synchronized or it can collide with
-                        // the disable method.
+                        // This has to be synchronized or it can collide with the disable method.
                         synchronized (optOutLock) {
-                            // Disable Task, if it is running and the server
-                            // owner decided to opt-out
+                            // Disable Task, if it is running and the server owner decided to opt-out
                             if (isOptOut() && task != null) {
                                 task.cancel();
                                 task = null;
-                                // Tell all plotters to stop gathering
-                                // information.
-                                for (final Graph graph: graphs) {
+                                // Tell all plotters to stop gathering information.
+                                for (Graph graph : graphs) {
                                     graph.onOptOut();
                                 }
                             }
                         }
 
-                        // We use the inverse of firstPost because if it is the
-                        // first time we are posting,
+                        // We use the inverse of firstPost because if it is the first time we are posting,
                         // it is not a interval ping, so it evaluates to FALSE
-                        // Each time thereafter it will evaluate to TRUE, i.e
-                        // PING!
+                        // Each time thereafter it will evaluate to TRUE, i.e PING!
                         postPlugin(!firstPost);
 
                         // After the first post we set firstPost to false
                         // Each post thereafter will be a ping
                         firstPost = false;
-                    } catch (final IOException e) {
+                    } catch (IOException e) {
                         if (debug) {
                             Bukkit.getLogger().log(Level.INFO, "[net.cubespace.Yamler.Metrics] " + e.getMessage());
                         }
                     }
                 }
-            }, 0, Metrics.PING_INTERVAL * 1200);
+            }, 0, PING_INTERVAL * 1200);
 
             return true;
         }
@@ -270,12 +246,12 @@ public class Metrics {
             try {
                 // Reload the metrics file
                 configuration.load(getConfigFile());
-            } catch (final IOException ex) {
+            } catch (IOException ex) {
                 if (debug) {
                     Bukkit.getLogger().log(Level.INFO, "[net.cubespace.Yamler.Metrics] " + ex.getMessage());
                 }
                 return true;
-            } catch (final InvalidConfigurationException ex) {
+            } catch (InvalidConfigurationException ex) {
                 if (debug) {
                     Bukkit.getLogger().log(Level.INFO, "[net.cubespace.Yamler.Metrics] " + ex.getMessage());
                 }
@@ -286,17 +262,14 @@ public class Metrics {
     }
 
     /**
-     * Enables metrics for the server by setting "opt-out" to false in the
-     * config file and starting the metrics task.
+     * Enables metrics for the server by setting "opt-out" to false in the config file and starting the metrics task.
      *
      * @throws java.io.IOException
      */
     public void enable() throws IOException {
-        // This has to be synchronized or it can collide with the check in the
-        // task.
+        // This has to be synchronized or it can collide with the check in the task.
         synchronized (optOutLock) {
-            // Check if the server owner has already set opt-out, if not, set
-            // it.
+            // Check if the server owner has already set opt-out, if not, set it.
             if (isOptOut()) {
                 configuration.set("opt-out", false);
                 configuration.save(configurationFile);
@@ -310,17 +283,14 @@ public class Metrics {
     }
 
     /**
-     * Disables metrics for the server by setting "opt-out" to true in the
-     * config file and canceling the metrics task.
+     * Disables metrics for the server by setting "opt-out" to true in the config file and canceling the metrics task.
      *
      * @throws java.io.IOException
      */
     public void disable() throws IOException {
-        // This has to be synchronized or it can collide with the check in the
-        // task.
+        // This has to be synchronized or it can collide with the check in the task.
         synchronized (optOutLock) {
-            // Check if the server owner has already set opt-out, if not, set
-            // it.
+            // Check if the server owner has already set opt-out, if not, set it.
             if (!isOptOut()) {
                 configuration.set("opt-out", true);
                 configuration.save(configurationFile);
@@ -335,19 +305,17 @@ public class Metrics {
     }
 
     /**
-     * Gets the File object of the config file that should be used to store data
-     * such as the GUID and opt-out status
+     * Gets the File object of the config file that should be used to store data such as the GUID and opt-out status
      *
      * @return the File object for the config file
      */
     public File getConfigFile() {
-        // I believe the easiest way to get the base folder (e.g craftbukkit set
-        // via -P) for plugins to use
+        // I believe the easiest way to get the base folder (e.g craftbukkit set via -P) for plugins to use
         // is to abuse the plugin object we already have
         // plugin.getDataFolder() => base/plugins/PluginA/
         // pluginsFolder => base/plugins/
         // The base is not necessarily relative to the startup directory.
-        final File pluginsFolder = plugin.getDataFolder().getParentFile();
+        File pluginsFolder = plugin.getDataFolder().getParentFile();
 
         // return => base/plugins/PluginMetrics/config.yml
         return new File(new File(pluginsFolder, "PluginMetrics"), "config.yml");
@@ -358,54 +326,47 @@ public class Metrics {
      */
     private void postPlugin(final boolean isPing) throws IOException {
         // Server software specific section
-        final PluginDescriptionFile description = plugin.getDescription();
-        final String pluginName = description.getName();
-        final boolean onlineMode = Bukkit.getServer().getOnlineMode(); // TRUE
-                                                                       // if
-                                                                       // online
-                                                                       // mode
-                                                                       // is
-                                                                       // enabled
-        final String pluginVersion = description.getVersion();
-        final String serverVersion = Bukkit.getVersion();
-        final int playersOnline = Bukkit.getServer().getOnlinePlayers().length;
+        PluginDescriptionFile description = plugin.getDescription();
+        String pluginName = description.getName();
+        boolean onlineMode = Bukkit.getServer().getOnlineMode(); // TRUE if online mode is enabled
+        String pluginVersion = description.getVersion();
+        String serverVersion = Bukkit.getVersion();
+        int playersOnline = Bukkit.getServer().getOnlinePlayers().length;
 
-        // END server software specific section -- all code below does not use
-        // any code outside of this class / Java
+        // END server software specific section -- all code below does not use any code outside of this class / Java
 
         // Construct the post data
-        final StringBuilder json = new StringBuilder(1024);
+        StringBuilder json = new StringBuilder(1024);
         json.append('{');
 
-        // The plugin's description file containg all of the plugin data such as
-        // name, version, author, etc
-        Metrics.appendJSONPair(json, "guid", guid);
-        Metrics.appendJSONPair(json, "plugin_version", pluginVersion);
-        Metrics.appendJSONPair(json, "server_version", serverVersion);
-        Metrics.appendJSONPair(json, "players_online", Integer.toString(playersOnline));
+        // The plugin's description file containg all of the plugin data such as name, version, author, etc
+        appendJSONPair(json, "guid", guid);
+        appendJSONPair(json, "plugin_version", pluginVersion);
+        appendJSONPair(json, "server_version", serverVersion);
+        appendJSONPair(json, "players_online", Integer.toString(playersOnline));
 
         // New data as of R6
-        final String osname = System.getProperty("os.name");
+        String osname = System.getProperty("os.name");
         String osarch = System.getProperty("os.arch");
-        final String osversion = System.getProperty("os.version");
-        final String java_version = System.getProperty("java.version");
-        final int coreCount = Runtime.getRuntime().availableProcessors();
+        String osversion = System.getProperty("os.version");
+        String java_version = System.getProperty("java.version");
+        int coreCount = Runtime.getRuntime().availableProcessors();
 
         // normalize os arch .. amd64 -> x86_64
         if (osarch.equals("amd64")) {
             osarch = "x86_64";
         }
 
-        Metrics.appendJSONPair(json, "osname", osname);
-        Metrics.appendJSONPair(json, "osarch", osarch);
-        Metrics.appendJSONPair(json, "osversion", osversion);
-        Metrics.appendJSONPair(json, "cores", Integer.toString(coreCount));
-        Metrics.appendJSONPair(json, "auth_mode", onlineMode ? "1" : "0");
-        Metrics.appendJSONPair(json, "java_version", java_version);
+        appendJSONPair(json, "osname", osname);
+        appendJSONPair(json, "osarch", osarch);
+        appendJSONPair(json, "osversion", osversion);
+        appendJSONPair(json, "cores", Integer.toString(coreCount));
+        appendJSONPair(json, "auth_mode", onlineMode ? "1" : "0");
+        appendJSONPair(json, "java_version", java_version);
 
         // If we're pinging, append it
         if (isPing) {
-            Metrics.appendJSONPair(json, "ping", "1");
+            appendJSONPair(json, "ping", "1");
         }
 
         if (graphs.size() > 0) {
@@ -422,13 +383,13 @@ public class Metrics {
                 final Iterator<Graph> iter = graphs.iterator();
 
                 while (iter.hasNext()) {
-                    final Graph graph = iter.next();
+                    Graph graph = iter.next();
 
-                    final StringBuilder graphJson = new StringBuilder();
+                    StringBuilder graphJson = new StringBuilder();
                     graphJson.append('{');
 
-                    for (final Plotter plotter: graph.getPlotters()) {
-                        Metrics.appendJSONPair(graphJson, plotter.getColumnName(), Integer.toString(plotter.getValue()));
+                    for (Plotter plotter : graph.getPlotters()) {
+                        appendJSONPair(graphJson, plotter.getColumnName(), Integer.toString(plotter.getValue()));
                     }
 
                     graphJson.append('}');
@@ -437,7 +398,7 @@ public class Metrics {
                         json.append(',');
                     }
 
-                    json.append(Metrics.escapeJSON(graph.getName()));
+                    json.append(escapeJSON(graph.getName()));
                     json.append(':');
                     json.append(graphJson);
 
@@ -452,7 +413,7 @@ public class Metrics {
         json.append('}');
 
         // Create the url
-        final URL url = new URL(Metrics.BASE_URL + String.format(Metrics.REPORT_URL, Metrics.urlEncode(pluginName)));
+        URL url = new URL(BASE_URL + String.format(REPORT_URL, urlEncode(pluginName)));
 
         // Connect to the website
         URLConnection connection;
@@ -465,11 +426,12 @@ public class Metrics {
             connection = url.openConnection();
         }
 
-        final byte[] uncompressed = json.toString().getBytes();
-        final byte[] compressed = Metrics.gzip(json.toString());
+
+        byte[] uncompressed = json.toString().getBytes();
+        byte[] compressed = gzip(json.toString());
 
         // Headers
-        connection.addRequestProperty("User-Agent", "MCStats/" + Metrics.REVISION);
+        connection.addRequestProperty("User-Agent", "MCStats/" + REVISION);
         connection.addRequestProperty("Content-Type", "application/json");
         connection.addRequestProperty("Content-Encoding", "gzip");
         connection.addRequestProperty("Content-Length", Integer.toString(compressed.length));
@@ -479,12 +441,11 @@ public class Metrics {
         connection.setDoOutput(true);
 
         if (debug) {
-            System.out.println("[net.cubespace.Yamler.Metrics] Prepared request for " + pluginName + " uncompressed="
-                    + uncompressed.length + " compressed=" + compressed.length);
+            System.out.println("[net.cubespace.Yamler.Metrics] Prepared request for " + pluginName + " uncompressed=" + uncompressed.length + " compressed=" + compressed.length);
         }
 
         // Write the data
-        final OutputStream os = connection.getOutputStream();
+        OutputStream os = connection.getOutputStream();
         os.write(compressed);
         os.flush();
 
@@ -513,7 +474,7 @@ public class Metrics {
                     while (iter.hasNext()) {
                         final Graph graph = iter.next();
 
-                        for (final Plotter plotter: graph.getPlotters()) {
+                        for (Plotter plotter : graph.getPlotters()) {
                             plotter.reset();
                         }
                     }
@@ -529,19 +490,18 @@ public class Metrics {
      * @return
      */
     public static byte[] gzip(String input) {
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         GZIPOutputStream gzos = null;
 
         try {
             gzos = new GZIPOutputStream(baos);
             gzos.write(input.getBytes("UTF-8"));
-        } catch (final IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (gzos != null) {
-                try {
-                    gzos.close();
-                } catch (final IOException ignore) {}
+            if (gzos != null) try {
+                gzos.close();
+            } catch (IOException ignore) {
             }
         }
 
@@ -549,8 +509,7 @@ public class Metrics {
     }
 
     /**
-     * Check if mineshafter is present. If it is, we need to bypass it to send
-     * POST requests
+     * Check if mineshafter is present. If it is, we need to bypass it to send POST requests
      *
      * @return true if mineshafter is installed on the server
      */
@@ -558,7 +517,7 @@ public class Metrics {
         try {
             Class.forName("mineshafter.MineServer");
             return true;
-        } catch (final Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -571,8 +530,7 @@ public class Metrics {
      * @param value
      * @throws UnsupportedEncodingException
      */
-    private static void appendJSONPair(StringBuilder json, String key, String value)
-            throws UnsupportedEncodingException {
+    private static void appendJSONPair(StringBuilder json, String key, String value) throws UnsupportedEncodingException {
         boolean isValueNumeric = false;
 
         try {
@@ -580,7 +538,7 @@ public class Metrics {
                 Double.parseDouble(value);
                 isValueNumeric = true;
             }
-        } catch (final NumberFormatException e) {
+        } catch (NumberFormatException e) {
             isValueNumeric = false;
         }
 
@@ -588,13 +546,13 @@ public class Metrics {
             json.append(',');
         }
 
-        json.append(Metrics.escapeJSON(key));
+        json.append(escapeJSON(key));
         json.append(':');
 
         if (isValueNumeric) {
             json.append(value);
         } else {
-            json.append(Metrics.escapeJSON(value));
+            json.append(escapeJSON(value));
         }
     }
 
@@ -605,11 +563,11 @@ public class Metrics {
      * @return
      */
     private static String escapeJSON(String text) {
-        final StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
 
         builder.append('"');
         for (int index = 0; index < text.length(); index++) {
-            final char chr = text.charAt(index);
+            char chr = text.charAt(index);
 
             switch (chr) {
                 case '"':
@@ -631,7 +589,7 @@ public class Metrics {
                     break;
                 default:
                     if (chr < ' ') {
-                        final String t = "000" + Integer.toHexString(chr);
+                        String t = "000" + Integer.toHexString(chr);
                         builder.append("\\u" + t.substring(t.length() - 4));
                     } else {
                         builder.append(chr);
@@ -647,8 +605,7 @@ public class Metrics {
     /**
      * Encode text as UTF-8
      *
-     * @param text
-     *            the text to encode
+     * @param text the text to encode
      * @return the encoded text, as UTF-8
      */
     private static String urlEncode(final String text) throws UnsupportedEncodingException {
@@ -661,11 +618,10 @@ public class Metrics {
     public static class Graph {
 
         /**
-         * The graph's name, alphanumeric and spaces only :) If it does not
-         * comply to the above when submitted, it is
+         * The graph's name, alphanumeric and spaces only :) If it does not comply to the above when submitted, it is
          * rejected
          */
-        private final String       name;
+        private final String name;
 
         /**
          * The set of plotters that are contained within this graph
@@ -688,8 +644,7 @@ public class Metrics {
         /**
          * Add a plotter to the graph, which will be used to plot entries
          *
-         * @param plotter
-         *            the plotter to add to the graph
+         * @param plotter the plotter to add to the graph
          */
         public void addPlotter(final Plotter plotter) {
             plotters.add(plotter);
@@ -698,8 +653,7 @@ public class Metrics {
         /**
          * Remove a plotter from the graph
          *
-         * @param plotter
-         *            the plotter to remove from the graph
+         * @param plotter the plotter to remove from the graph
          */
         public void removePlotter(final Plotter plotter) {
             plotters.remove(plotter);
@@ -730,8 +684,7 @@ public class Metrics {
         }
 
         /**
-         * Called when the server owner decides to opt-out of BukkitMetrics
-         * while the server is running.
+         * Called when the server owner decides to opt-out of BukkitMetrics while the server is running.
          */
         protected void onOptOut() {
         }
@@ -757,21 +710,16 @@ public class Metrics {
         /**
          * Construct a plotter with a specific plot name
          *
-         * @param name
-         *            the name of the plotter to use, which will show up on the
-         *            website
+         * @param name the name of the plotter to use, which will show up on the website
          */
         public Plotter(final String name) {
             this.name = name;
         }
 
         /**
-         * Get the current value for the plotted point. Since this function
-         * defers to an external function it may or may
-         * not return immediately thus cannot be guaranteed to be thread
-         * friendly or safe. This function can be called
-         * from any thread so care should be taken when accessing resources that
-         * need to be synchronized.
+         * Get the current value for the plotted point. Since this function defers to an external function it may or may
+         * not return immediately thus cannot be guaranteed to be thread friendly or safe. This function can be called
+         * from any thread so care should be taken when accessing resources that need to be synchronized.
          *
          * @return the current value for the point to be plotted.
          */

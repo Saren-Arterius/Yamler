@@ -1,28 +1,29 @@
 package net.cubespace.Yamler.Config.Converter;
 
+import net.cubespace.Yamler.Config.InternalConverter;
+
 import java.lang.reflect.ParameterizedType;
 import java.util.HashSet;
-
-import net.cubespace.Yamler.Config.InternalConverter;
 
 /**
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
 public class Primitive implements Converter {
-    private final HashSet<String> types = new HashSet<String>() {
-        {
-            add("boolean");
-            add("char");
-            add("byte");
-            add("short");
-            add("int");
-            add("long");
-            add("float");
-            add("double");
-        }
-    };
+    private HashSet<String> types = new HashSet<String>() {{
+        add("boolean");
+        add("char");
+        add("byte");
+        add("short");
+        add("int");
+        add("long");
+        add("float");
+        add("double");
+    }};
+
+    private InternalConverter internalConverter;
 
     public Primitive(InternalConverter internalConverter) {
+        this.internalConverter = internalConverter;
     }
 
     @Override
@@ -32,7 +33,7 @@ public class Primitive implements Converter {
 
     @Override
     public Object fromConfig(Class type, Object section, ParameterizedType genericType) throws Exception {
-        switch (type.getSimpleName()) {
+        switch(type.getSimpleName()) {
             case "short":
                 return (section instanceof Short) ? section : new Integer((int) section).shortValue();
             case "byte":

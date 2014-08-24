@@ -4,8 +4,7 @@ package net.cubespace.Yamler.Config;
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
 public class InvalidConfigurationException extends Exception {
-    public InvalidConfigurationException() {
-    }
+    public InvalidConfigurationException() {}
 
     public InvalidConfigurationException(String msg) {
         super(msg);

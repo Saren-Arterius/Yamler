@@ -1,15 +1,15 @@
 package realconfig.servermenu.config;
 
+import net.cubespace.Yamler.Config.Config;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import net.cubespace.Yamler.Config.Config;
-
 public class ServermenuConfig extends Config {
     public ServermenuConfig() {
-        final ArrayList<Servers> servers = new ArrayList<>();
+        ArrayList<Servers> servers = new ArrayList<>();
 
-        final Servers servers1 = new Servers();
+        Servers servers1 = new Servers();
 
         servers1.setServer("TDM1");
         servers1.setDisplayMotd(false);
@@ -19,7 +19,7 @@ public class ServermenuConfig extends Config {
 
         servers.add(servers1);
 
-        final Menus menus1 = new Menus();
+        Menus menus1 = new Menus();
 
         menus1.setTitle("Game Servers");
         menus1.setServers(servers);
@@ -27,5 +27,5 @@ public class ServermenuConfig extends Config {
         menus.put("Game Servers", menus1);
     }
 
-    private final HashMap<String, Menus> menus = new HashMap<>();
+    private HashMap<String, Menus> menus = new HashMap<>();
 }

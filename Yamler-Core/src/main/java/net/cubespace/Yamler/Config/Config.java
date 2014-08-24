@@ -16,7 +16,7 @@ public class Config extends MapConfigMapper implements IConfig {
 
     }
 
-    public Config(String filename, String... header) {
+    public Config(String filename, String ... header) {
         CONFIG_FILE = new File(filename + (filename.endsWith(".yml") ? "" : ".yml"));
         CONFIG_HEADER = header;
     }
@@ -42,35 +42,32 @@ public class Config extends MapConfigMapper implements IConfig {
             internalSave(clazz.getSuperclass());
         }
 
-        for (final Field field: clazz.getDeclaredFields()) {
-            if (doSkip(field)) {
-                continue;
-            }
+        for (Field field : clazz.getDeclaredFields()) {
+            if (doSkip(field)) continue;
 
-            String path = (CONFIG_MODE.equals(ConfigMode.DEFAULT)) ? field.getName().replaceAll("_", ".") : field
-                    .getName();
+            String path = (CONFIG_MODE.equals(ConfigMode.DEFAULT)) ? field.getName().replaceAll("_", ".") : field.getName();
 
-            final ArrayList<String> comments = new ArrayList<>();
-            for (final Annotation annotation: field.getAnnotations()) {
+            ArrayList<String> comments = new ArrayList<>();
+            for (Annotation annotation : field.getAnnotations()) {
                 if (annotation instanceof Comment) {
-                    final Comment comment = (Comment) annotation;
+                    Comment comment = (Comment) annotation;
                     comments.add(comment.value());
 
                 }
 
                 if (annotation instanceof Comments) {
-                    final Comments comment = (Comments) annotation;
+                    Comments comment = (Comments) annotation;
                     comments.addAll(Arrays.asList(comment.value()));
                 }
             }
 
             if (field.isAnnotationPresent(Path.class)) {
-                final Path path1 = field.getAnnotation(Path.class);
+                Path path1 = field.getAnnotation(Path.class);
                 path = path1.value();
             }
 
             if (comments.size() > 0) {
-                for (final String comment: comments) {
+                for (String comment : comments) {
                     addComment(path, comment);
                 }
             }
@@ -82,7 +79,7 @@ public class Config extends MapConfigMapper implements IConfig {
             try {
                 converter.toConfig(this, field, root, path);
                 converter.fromConfig(this, field, root, path);
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 if (!skipFailedObjects) {
                     throw new InvalidConfigurationException("Could not save the Field", e);
                 }
@@ -103,14 +100,13 @@ public class Config extends MapConfigMapper implements IConfig {
     @Override
     public void init() throws InvalidConfigurationException {
         if (!CONFIG_FILE.exists()) {
-            if (CONFIG_FILE.getParentFile() != null) {
+            if (CONFIG_FILE.getParentFile() != null)
                 CONFIG_FILE.getParentFile().mkdirs();
-            }
 
             try {
                 CONFIG_FILE.createNewFile();
                 save();
-            } catch (final IOException e) {
+            } catch (IOException e) {
                 throw new InvalidConfigurationException("Could not create new empty Config", e);
             }
         } else {
@@ -151,16 +147,13 @@ public class Config extends MapConfigMapper implements IConfig {
         }
 
         boolean save = false;
-        for (final Field field: clazz.getDeclaredFields()) {
-            if (doSkip(field)) {
-                continue;
-            }
+        for (Field field : clazz.getDeclaredFields()) {
+            if (doSkip(field)) continue;
 
-            String path = (CONFIG_MODE.equals(ConfigMode.DEFAULT)) ? field.getName().replaceAll("_", ".") : field
-                    .getName();
+            String path = (CONFIG_MODE.equals(ConfigMode.DEFAULT)) ? field.getName().replaceAll("_", ".") : field.getName();
 
             if (field.isAnnotationPresent(Path.class)) {
-                final Path path1 = field.getAnnotation(Path.class);
+                Path path1 = field.getAnnotation(Path.class);
                 path = path1.value();
             }
 
@@ -171,7 +164,7 @@ public class Config extends MapConfigMapper implements IConfig {
             if (root.has(path)) {
                 try {
                     converter.fromConfig(this, field, root, path);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     throw new InvalidConfigurationException("Could not set field", e);
                 }
             } else {
@@ -180,7 +173,7 @@ public class Config extends MapConfigMapper implements IConfig {
                     converter.fromConfig(this, field, root, path);
 
                     save = true;
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     if (!skipFailedObjects) {
                         throw new InvalidConfigurationException("Could not get field", e);
                     }

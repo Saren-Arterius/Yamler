@@ -1,31 +1,29 @@
-import java.io.File;
-import java.io.IOException;
-
+import base.Util;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
-
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import base.Util;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
 public class FieldIsKey {
     private FieldIsKeyConfig fieldIsKeyConfig;
-    private File             file;
+    private File file;
 
     @BeforeSuite
     public void before() {
         fieldIsKeyConfig = new FieldIsKeyConfig();
 
         file = new File("temp", "fieldIsKeyConfig.yml");
-        if (!file.getParentFile().exists()) {
+        if(!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
 
-        if (file.exists()) {
+        if(file.exists()) {
             file.delete();
         }
     }
@@ -34,9 +32,9 @@ public class FieldIsKey {
     public void initNull() throws InvalidConfigurationException, IOException {
         fieldIsKeyConfig.init(file);
 
-        final String fileContents = Util.readFile(file);
+        String fileContents = Util.readFile(file);
 
-        Assert.assertEquals(fileContents.replace("\r", ""), "MOTD: '&dWelcome to the server {player}!'\n"
-                + "PLAYER_CONNECT_PROXY: '{player}&e has joined the server!'\n");
+        Assert.assertEquals(fileContents.replace("\r", ""), "MOTD: '&dWelcome to the server {player}!'\n" +
+                "PLAYER_CONNECT_PROXY: '{player}&e has joined the server!'\n");
     }
 }

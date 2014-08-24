@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 public class Singleton {
     @Test
     public void init() {
-        final String message = Messages.get("general");
+        String message = Messages.get("general");
         Assert.assertEquals(message, "Did I do that!");
     }
 
