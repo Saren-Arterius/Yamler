@@ -1,16 +1,16 @@
 package net.cubespace.Yamler.Config.Converter;
 
-import net.cubespace.Yamler.Config.ConfigSection;
-import net.cubespace.Yamler.Config.InternalConverter;
-
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
+
+import net.cubespace.Yamler.Config.ConfigSection;
+import net.cubespace.Yamler.Config.InternalConverter;
 
 /**
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
 public class Map implements Converter {
-    private InternalConverter internalConverter;
+    private final InternalConverter internalConverter;
 
     public Map(InternalConverter internalConverter) {
         this.internalConverter = internalConverter;
@@ -18,15 +18,18 @@ public class Map implements Converter {
 
     @Override
     public Object toConfig(Class<?> type, Object obj, ParameterizedType genericType) throws Exception {
-        java.util.Map<Object, Object> map1 = (java.util.Map) obj;
+        final java.util.Map<Object, Object> map1 = (java.util.Map) obj;
 
-        for (java.util.Map.Entry<Object, Object> entry : map1.entrySet()) {
-            if (entry.getValue() == null) continue;
+        for (final java.util.Map.Entry<Object, Object> entry: map1.entrySet()) {
+            if (entry.getValue() == null) {
+                continue;
+            }
 
-            Class clazz = entry.getValue().getClass();
+            final Class clazz = entry.getValue().getClass();
 
-            Converter converter = internalConverter.getConverter(clazz);
-            map1.put(entry.getKey(), (converter != null) ? converter.toConfig(clazz, entry.getValue(), null) : entry.getValue());
+            final Converter converter = internalConverter.getConverter(clazz);
+            map1.put(entry.getKey(),
+                    (converter != null) ? converter.toConfig(clazz, entry.getValue(), null) : entry.getValue());
         }
 
         return map1;
@@ -39,15 +42,16 @@ public class Map implements Converter {
             java.util.Map map;
             try {
                 map = ((java.util.Map) ((Class) genericType.getRawType()).newInstance());
-            } catch (InstantiationException e) {
+            } catch (final InstantiationException e) {
                 map = new HashMap();
             }
 
             if (genericType.getActualTypeArguments().length == 2) {
-                Class keyClass = ((Class) genericType.getActualTypeArguments()[0]);
+                final Class keyClass = ((Class) genericType.getActualTypeArguments()[0]);
 
-                java.util.Map<?, ?> map1 = (section instanceof java.util.Map) ? (java.util.Map) section : ((ConfigSection) section).getRawMap();
-                for (java.util.Map.Entry<?, ?> entry : map1.entrySet()) {
+                final java.util.Map<?, ?> map1 = (section instanceof java.util.Map) ? (java.util.Map) section
+                        : ((ConfigSection) section).getRawMap();
+                for (final java.util.Map.Entry<?, ?> entry: map1.entrySet()) {
                     Object key;
 
                     if (keyClass.equals(Integer.class) && !(entry.getKey() instanceof Integer)) {
@@ -66,23 +70,31 @@ public class Map implements Converter {
 
                     Class clazz;
                     if (genericType.getActualTypeArguments()[1] instanceof ParameterizedType) {
-                        ParameterizedType parameterizedType = (ParameterizedType) genericType.getActualTypeArguments()[1];
+                        final ParameterizedType parameterizedType = (ParameterizedType) genericType
+                                .getActualTypeArguments()[1];
                         clazz = (Class) parameterizedType.getRawType();
                     } else {
                         clazz = (Class) genericType.getActualTypeArguments()[1];
                     }
 
-                    Converter converter = internalConverter.getConverter(clazz);
-                    map.put(key, (converter != null) ? converter.fromConfig(clazz, entry.getValue(), (genericType.getActualTypeArguments()[1] instanceof ParameterizedType) ? (ParameterizedType) genericType.getActualTypeArguments()[1] : null) : entry.getValue());
+                    final Converter converter = internalConverter.getConverter(clazz);
+                    map.put(key,
+                            (converter != null) ? converter.fromConfig(
+                                    clazz,
+                                    entry.getValue(),
+                                    (genericType.getActualTypeArguments()[1] instanceof ParameterizedType) ? (ParameterizedType) genericType
+                                            .getActualTypeArguments()[1] : null)
+                                            : entry.getValue());
                 }
             } else {
-                Converter converter = internalConverter.getConverter((Class) genericType.getRawType());
+                final Converter converter = internalConverter.getConverter((Class) genericType.getRawType());
 
                 if (converter != null) {
                     return converter.fromConfig((Class) genericType.getRawType(), section, null);
                 }
 
-                return (section instanceof java.util.Map) ? (java.util.Map) section : ((ConfigSection) section).getRawMap();
+                return (section instanceof java.util.Map) ? (java.util.Map) section : ((ConfigSection) section)
+                        .getRawMap();
             }
 
             return map;

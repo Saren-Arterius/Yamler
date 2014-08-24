@@ -1,9 +1,8 @@
 package base;
 
-import net.cubespace.Yamler.Config.Config;
-import org.testng.annotations.BeforeSuite;
-
 import java.io.File;
+
+import net.cubespace.Yamler.Config.Config;
 
 /**
  * @author geNAZt (fabian.fassbender42@googlemail.com)
@@ -11,15 +10,15 @@ import java.io.File;
 public abstract class BaseTest {
     protected String filename;
     protected Config config;
-    protected File file;
+    protected File   file;
 
     public void before() throws Exception {
         file = new File("temp", filename);
-        if(!file.getParentFile().exists()) {
+        if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
 
-        if(file.exists()) {
+        if (file.exists()) {
             file.delete();
         }
     }

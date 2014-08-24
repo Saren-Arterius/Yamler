@@ -1,14 +1,14 @@
 package net.cubespace.Yamler.Config.Converter;
 
-import net.cubespace.Yamler.Config.*;
-
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import net.cubespace.Yamler.Config.InternalConverter;
+
 public class Set implements Converter {
-    private InternalConverter internalConverter;
+    private final InternalConverter internalConverter;
 
     public Set(InternalConverter internalConverter) {
         this.internalConverter = internalConverter;
@@ -16,19 +16,20 @@ public class Set implements Converter {
 
     @Override
     public Object toConfig(Class<?> type, Object obj, ParameterizedType genericType) throws Exception {
-        java.util.Set<Object> values = (java.util.Set<Object>) obj;
-        java.util.List newList = new ArrayList();
+        final java.util.Set<Object> values = (java.util.Set<Object>) obj;
+        final java.util.List newList = new ArrayList();
 
-        Iterator<Object> iterator = values.iterator();
-        while(iterator.hasNext()) {
-            Object val = iterator.next();
+        final Iterator<Object> iterator = values.iterator();
+        while (iterator.hasNext()) {
+            final Object val = iterator.next();
 
-            Converter converter = internalConverter.getConverter(val.getClass());
+            final Converter converter = internalConverter.getConverter(val.getClass());
 
-            if (converter != null)
+            if (converter != null) {
                 newList.add(converter.toConfig(val.getClass(), val, null));
-            else
+            } else {
                 newList.add(val);
+            }
         }
 
         return newList;
@@ -36,20 +37,21 @@ public class Set implements Converter {
 
     @Override
     public Object fromConfig(Class type, Object section, ParameterizedType genericType) throws Exception {
-        java.util.List<Object> values = (java.util.List<Object>) section;
+        final java.util.List<Object> values = (java.util.List<Object>) section;
         java.util.Set<Object> newList = new HashSet<>();
 
         try {
             newList = (java.util.Set<Object>) type.newInstance();
-        } catch (Exception e) { }
+        } catch (final Exception e) {}
 
-        for (Object val : values) {
-            Converter converter = internalConverter.getConverter(val.getClass());
+        for (final Object val: values) {
+            final Converter converter = internalConverter.getConverter(val.getClass());
 
-            if (converter != null)
+            if (converter != null) {
                 newList.add(converter.toConfig(val.getClass(), val, null));
-            else
+            } else {
                 newList.add(val);
+            }
         }
 
         return newList;

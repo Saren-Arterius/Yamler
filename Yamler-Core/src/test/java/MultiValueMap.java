@@ -1,29 +1,31 @@
-import base.Util;
-import net.cubespace.Yamler.Config.InvalidConfigurationException;
-import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import net.cubespace.Yamler.Config.InvalidConfigurationException;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeSuite;
+
+import base.Util;
 
 /**
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
 public class MultiValueMap {
     private MultiValueMapConfig multiValueMapConfig;
-    private File file;
+    private File                file;
 
     @BeforeSuite
     public void before() {
         multiValueMapConfig = new MultiValueMapConfig();
 
         file = new File("temp", "multiValueMapConfig.yml");
-        if(!file.getParentFile().exists()) {
+        if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
 
-        if(file.exists()) {
+        if (file.exists()) {
             file.delete();
         }
     }
@@ -32,23 +34,13 @@ public class MultiValueMap {
     public void initNull() throws InvalidConfigurationException, IOException {
         multiValueMapConfig.init(file);
 
-        String fileContents = Util.readFile(file);
+        final String fileContents = Util.readFile(file);
         System.out.println(fileContents);
 
-        Assert.assertEquals(fileContents.replace("\r", ""), "items:\n" +
-                "  example:\n" +
-                "  - BOOK\n" +
-                "  - WRITTEN_BOOK\n" +
-                "servers:\n" +
-                "  default:\n" +
-                "    item:\n" +
-                "      name: '&6Server Name'\n" +
-                "      type: ENCHANTED_BOOK\n" +
-                "    servers:\n" +
-                "    - server_one\n" +
-                "    - server_two\n" +
-                "intMap:\n" +
-                "  1: []\n");
+        Assert.assertEquals(fileContents.replace("\r", ""), "items:\n" + "  example:\n" + "  - BOOK\n"
+                + "  - WRITTEN_BOOK\n" + "servers:\n" + "  default:\n" + "    item:\n"
+                + "      name: '&6Server Name'\n" + "      type: ENCHANTED_BOOK\n" + "    servers:\n"
+                + "    - server_one\n" + "    - server_two\n" + "intMap:\n" + "  1: []\n");
     }
 
     @org.testng.annotations.Test(priority = 2)
@@ -57,29 +49,17 @@ public class MultiValueMap {
         multiValueMapConfig.getItems().get("example").add("Test");
         multiValueMapConfig.save();
 
-        String fileContents = Util.readFile(file);
+        final String fileContents = Util.readFile(file);
 
-        Assert.assertEquals(fileContents.replace("\r", ""), "items:\n" +
-                "  test: []\n" +
-                "  example:\n" +
-                "  - BOOK\n" +
-                "  - WRITTEN_BOOK\n" +
-                "  - Test\n" +
-                "servers:\n" +
-                "  default:\n" +
-                "    item:\n" +
-                "      name: '&6Server Name'\n" +
-                "      type: ENCHANTED_BOOK\n" +
-                "    servers:\n" +
-                "    - server_one\n" +
-                "    - server_two\n" +
-                "intMap:\n" +
-                "  1: []\n");
+        Assert.assertEquals(fileContents.replace("\r", ""), "items:\n" + "  test: []\n" + "  example:\n" + "  - BOOK\n"
+                + "  - WRITTEN_BOOK\n" + "  - Test\n" + "servers:\n" + "  default:\n" + "    item:\n"
+                + "      name: '&6Server Name'\n" + "      type: ENCHANTED_BOOK\n" + "    servers:\n"
+                + "    - server_one\n" + "    - server_two\n" + "intMap:\n" + "  1: []\n");
     }
 
     @org.testng.annotations.Test(priority = 3)
     public void loadConfig() throws InvalidConfigurationException {
-        MultiValueMapConfig multiValueMapConfig1 = new MultiValueMapConfig();
+        final MultiValueMapConfig multiValueMapConfig1 = new MultiValueMapConfig();
         multiValueMapConfig1.load(file);
 
         Assert.assertEquals(multiValueMapConfig1.getItems().size(), 2);

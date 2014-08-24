@@ -1,29 +1,31 @@
-import base.Util;
+import java.io.File;
+import java.io.IOException;
+
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
+
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.IOException;
+import base.Util;
 
 /**
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
 public class List {
     private ListConfig listConfig;
-    private File file;
+    private File       file;
 
     @BeforeSuite
     public void before() {
         listConfig = new ListConfig();
 
         file = new File("temp", "listConfig.yml");
-        if(!file.getParentFile().exists()) {
+        if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
 
-        if(file.exists()) {
+        if (file.exists()) {
             file.delete();
         }
     }
@@ -32,10 +34,9 @@ public class List {
     public void initNull() throws InvalidConfigurationException, IOException {
         listConfig.init(file);
 
-        String fileContents = Util.readFile(file);
+        final String fileContents = Util.readFile(file);
 
-        Assert.assertEquals(fileContents.replace("\r", ""), "TestList:\n" +
-                "- Test: Test\n");
+        Assert.assertEquals(fileContents.replace("\r", ""), "TestList:\n" + "- Test: Test\n");
     }
 
     @org.testng.annotations.Test(priority = 2)
@@ -43,16 +44,14 @@ public class List {
         listConfig.TestList.add(new ListSubConfig());
         listConfig.save();
 
-        String fileContents = Util.readFile(file);
+        final String fileContents = Util.readFile(file);
 
-        Assert.assertEquals(fileContents.replace("\r", ""), "TestList:\n" +
-                "- Test: Test\n" +
-                "- Test: Test\n");
+        Assert.assertEquals(fileContents.replace("\r", ""), "TestList:\n" + "- Test: Test\n" + "- Test: Test\n");
     }
 
     @org.testng.annotations.Test(priority = 3)
     public void loadConfig() throws InvalidConfigurationException {
-        ListConfig listConfig1 = new ListConfig();
+        final ListConfig listConfig1 = new ListConfig();
         listConfig1.load(file);
 
         Assert.assertEquals(listConfig1.TestList.size(), 2);

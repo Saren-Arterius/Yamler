@@ -1,43 +1,65 @@
-import net.cubespace.Yamler.Config.Config;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import net.cubespace.Yamler.Config.Config;
 
 /**
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
 public class MultiValueMapConfig extends Config {
-    private java.util.HashMap<String, java.util.List<String>> items = new java.util.HashMap<String, java.util.List<String>>() {{
-        //  Defaults
-        java.util.List<String> example = new ArrayList<String>() {{
-            add("BOOK");
-            add("WRITTEN_BOOK");
-        }};
+    private java.util.HashMap<String, java.util.List<String>> items   = new java.util.HashMap<String, java.util.List<String>>() {
+        {
+            // Defaults
+            final java.util.List<String> example = new ArrayList<String>() {
+                {
+                    add("BOOK");
+                    add("WRITTEN_BOOK");
+                }
+            };
 
-        put("example", example);
-    }};
+            put("example", example);
+        }
+    };
 
-    private HashMap<String, HashMap<String, Object>> servers = new HashMap<String, HashMap<String, Object>>() {{
-        // Default layout
-        put("default", new HashMap<String, Object>() {{
-            // Item layout
-            put("item", new HashMap<String, Object>() {{
-                put("name", "&6Server Name");
-                put("type", "ENCHANTED_BOOK");
-            }});
+    private HashMap<String, HashMap<String, Object>>          servers = new HashMap<String, HashMap<String, Object>>() {
+        {
+            // Default
+            // layout
+            put("default",
+                    new HashMap<String, Object>() {
+                {
+                    // Item
+                    // layout
+                    put("item",
+                            new HashMap<String, Object>() {
+                        {
+                            put("name",
+                                    "&6Server Name");
+                            put("type",
+                                    "ENCHANTED_BOOK");
+                        }
+                    });
 
-            // Server layout
-            put("servers", new ArrayList<String>() {{
-                add("server_one");
-                add("server_two");
-            }});
-        }});
-    }};
+                    // Server
+                    // layout
+                    put("servers",
+                            new ArrayList<String>() {
+                        {
+                            add("server_one");
+                            add("server_two");
+                        }
+                    });
+                }
+            });
+        }
+    };
 
-    private HashMap<Integer, ArrayList<String>> intMap = new HashMap<Integer, ArrayList<String>>() {{
-        put(1, new ArrayList<String>());
-    }};
+    private HashMap<Integer, ArrayList<String>>               intMap  = new HashMap<Integer, ArrayList<String>>() {
+        {
+            put(1, new ArrayList<String>());
+        }
+    };
 
     public HashMap<String, List<String>> getItems() {
         return items;
